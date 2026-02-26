@@ -26,6 +26,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    document.getElementById('view-report-btn').addEventListener('click', () => {
+        chrome.tabs.create({ url: chrome.runtime.getURL("report.html") });
+    });
+
     async function scanUrl(url) {
         if (!url.startsWith('http')) {
             document.getElementById('risk-score').textContent = "Not a scannable page";

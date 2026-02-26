@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Sentinel: AI Phishing Early Warning",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Protects students from phishing and malicious emails using explainable AI.",
   "permissions": [
     "activeTab",
     "tabs",
     "scripting",
+    "storage",
     "webNavigation"
   ],
   "host_permissions": [
@@ -37,7 +38,8 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "blocked.html"
+        "blocked.html",
+        "report.html"
       ],
       "matches": [
         "<all_urls>"
