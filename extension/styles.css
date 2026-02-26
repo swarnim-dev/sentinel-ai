@@ -1,0 +1,325 @@
+/* ─── Popup Styles ─── */
+body.popup-body {
+    width: 340px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 14px;
+    background: #1a1a2e;
+    color: #eee;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 18px;
+    background: linear-gradient(135deg, #e94560, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+#result-box {
+    padding: 14px;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-weight: bold;
+    text-align: center;
+    font-size: 15px;
+}
+
+.safe-box {
+    background: linear-gradient(135deg, #0f3443, #34e89e20);
+    color: #34e89e;
+    border: 1px solid #34e89e55;
+}
+
+.danger-box {
+    background: linear-gradient(135deg, #3a0000, #e9456040);
+    color: #ff6b6b;
+    border: 1px solid #e9456088;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, #e94560, #c23152);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(233, 69, 96, 0.4);
+}
+
+#explanations-box {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-top: 6px;
+}
+
+#explanations-box ul {
+    margin: 5px 0;
+    padding-left: 18px;
+    font-size: 0.88em;
+    color: #ccc;
+    line-height: 1.6;
+}
+
+h3 {
+    font-size: 13px;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 10px 0 6px;
+}
+
+label {
+    font-size: 13px;
+    color: #bbb;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 14px 0;
+}
+
+#page-url {
+    font-size: 12px;
+    color: #888;
+    word-break: break-all;
+    margin: 4px 0 8px;
+}
+
+
+/* ─────────────────────────────────────────────── */
+/*  Injected Warning Banner Styles (Content Script) */
+/* ─────────────────────────────────────────────── */
+
+#sentinel-warning-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2147483647;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    animation: sentinel-slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-bottom: 3px solid #b91c1c;
+}
+
+/* Header bar */
+.sentinel-banner-header {
+    background: linear-gradient(135deg, #991b1b, #dc2626);
+    color: white;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.sentinel-banner-header strong {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#sentinel-close-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+#sentinel-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Body */
+.sentinel-banner-body {
+    background: #fef2f2;
+    padding: 20px 24px;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* Risk Score Gauge */
+.sentinel-risk-gauge {
+    flex-shrink: 0;
+    width: 100px;
+    text-align: center;
+}
+
+.sentinel-risk-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 28px;
+    color: white;
+    margin: 0 auto 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.sentinel-risk-high {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+}
+
+.sentinel-risk-medium {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.sentinel-risk-low {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+}
+
+.sentinel-risk-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #991b1b;
+}
+
+/* Reasons section */
+.sentinel-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.sentinel-details h3 {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #991b1b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sentinel-details p.sentinel-subtitle {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: #7f1d1d;
+    line-height: 1.5;
+}
+
+.sentinel-reasons-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+}
+
+.sentinel-reasons-list li {
+    position: relative;
+    padding: 8px 12px 8px 32px;
+    margin-bottom: 6px;
+    background: #fee2e2;
+    border-left: 3px solid #dc2626;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #450a0a;
+}
+
+.sentinel-reasons-list li::before {
+    content: "⚡";
+    position: absolute;
+    left: 10px;
+    top: 8px;
+}
+
+/* Feedback row */
+.sentinel-feedback {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: white;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+}
+
+.sentinel-feedback span {
+    font-weight: 600;
+    font-size: 13px;
+    color: #991b1b;
+    white-space: nowrap;
+}
+
+.sentinel-feedback button {
+    padding: 7px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.sentinel-feedback button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+#sentinel-btn-phishing {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+}
+
+#sentinel-btn-safe {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+}
+
+/* Thank-you message */
+.sentinel-thankyou {
+    padding: 16px 24px;
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    border-top: 1px solid #bbf7d0;
+}
+
+@keyframes sentinel-slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

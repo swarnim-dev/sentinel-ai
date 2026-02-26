@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚠️ Site Blocked — Sentinel AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 680px;
+            width: 90%;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Shield icon */
+        .shield {
+            text-align: center;
+            font-size: 72px;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 0 24px rgba(220, 38, 38, 0.5));
+        }
+
+        /* Header */
+        .title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 28px;
+        }
+
+        /* URL display */
+        .blocked-url-box {
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.25);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            word-break: break-all;
+            font-size: 13px;
+            color: #f87171;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        .blocked-url-box span.label {
+            display: block;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #777;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        /* Risk gauge row */
+        .risk-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .risk-circle {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.35);
+        }
+
+        .risk-high {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+        }
+
+        .risk-medium {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .risk-circle .pct-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        .risk-text {
+            flex: 1;
+        }
+
+        .risk-text h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+            color: #f87171;
+        }
+
+        .risk-text p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #aaa;
+        }
+
+        /* Reasons */
+        .reasons-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .reasons-box h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            margin-bottom: 14px;
+        }
+
+        .reason-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: rgba(220, 38, 38, 0.06);
+            border-left: 3px solid #dc2626;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #ddd;
+        }
+
+        .reason-card .icon {
+            flex-shrink: 0;
+            font-size: 16px;
+            margin-top: 1px;
+        }
+
+        /* Action buttons */
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: white;
+            box-shadow: 0 4px 16px rgba(22, 163, 74, 0.3);
+        }
+
+        .btn-back:hover {
+            box-shadow: 0 6px 24px rgba(22, 163, 74, 0.45);
+        }
+
+        .btn-proceed {
+            background: rgba(255, 255, 255, 0.06);
+            color: #999;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-proceed:hover {
+            color: #f87171;
+            border-color: rgba(220, 38, 38, 0.3);
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.15);
+        }
+
+        .warning-note {
+            text-align: center;
+            font-size: 11px;
+            color: #555;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="shield">🛡️</div>
+        <div class="title">Site Blocked by Sentinel AI</div>
+        <div class="subtitle">This website has been flagged as a potential phishing threat</div>
+
+        <div class="blocked-url-box">
+            <span class="label">Blocked URL</span>
+            <span id="blocked-url">Loading...</span>
+        </div>
+
+        <div class="risk-row">
+            <div class="risk-circle risk-high" id="risk-circle">
+                <span id="risk-pct">—</span>
+                <span class="pct-label" id="risk-label">Risk</span>
+            </div>
+            <div class="risk-text">
+                <h3>Phishing Threat Detected</h3>
+                <p>Our AI model analyzed this URL and found patterns commonly associated with phishing attacks designed
+                    to steal your personal information.</p>
+            </div>
+        </div>
+
+        <div class="reasons-box">
+            <h3>⚡ Why This Was Blocked</h3>
+            <div id="reasons-list">
+                <div class="reason-card">
+                    <span class="icon">🔍</span>
+                    <span>Analyzing threat…</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-back" id="btn-back">← Go Back to Safety</button>
+            <button class="btn btn-proceed" id="btn-proceed">I understand, proceed →</button>
+        </div>
+
+        <p class="warning-note">
+            ⚠️ Proceeding to this site may expose you to credential theft, malware, or identity fraud.
+        </p>
+    </div>
+
+    <script src="blocked.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel Status</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="popup-body">
+    <div class="header">
+        <h2>SENTINEL AI</h2>
+    </div>
+
+    <div id="status-container">
+        <h3>Current Page</h3>
+        <p id="page-url">Checking...</p>
+        <div id="result-box" class="safe-box">
+            <span id="risk-score">Scanning...</span>
+        </div>
+        <div id="explanations-box"></div>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>System</h3>
+        <label>API Status: <span id="api-status" style="color:orange;">Checking...</span></label>
+        <br><br>
+        <button id="scan-manual-btn" class="action-btn">Re-scan This Page</button>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
