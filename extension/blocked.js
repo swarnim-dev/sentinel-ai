@@ -49,13 +49,14 @@ document.getElementById("btn-back").addEventListener("click", () => {
     if (window.history.length > 1) {
         window.history.back();
     } else {
-        // If there's no history, navigate to a safe page
         window.location.href = "https://www.google.com";
     }
 });
 
 // ── Proceed (bypass) ──
 document.getElementById("btn-proceed").addEventListener("click", () => {
+    // User says it's safe — send feedback
+    sendFeedback(blockedUrl, "safe", "phishing");
     chrome.runtime.sendMessage(
         { action: "bypass_url", url: blockedUrl },
         () => {
@@ -63,6 +64,19 @@ document.getElementById("btn-proceed").addEventListener("click", () => {
         }
     );
 });
+
+function sendFeedback(url, userLabel, predictionWas) {
+    fetch("http://127.0.0.1:8000/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            item_type: "url",
+            url: url,
+            user_label: userLabel,
+            prediction_was: predictionWas
+        })
+    }).catch(e => console.error("Feedback failed", e));
+}
 
 function escapeHtml(text) {
     const div = document.createElement("div");

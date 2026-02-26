@@ -99,7 +99,7 @@ function sendFeedback(type, userLabel) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             item_type: type || "url",
-            item_hash: "anonymous_hash_placeholder",
+            url: window.location.href,
             user_label: userLabel,
             prediction_was: "phishing"
         })

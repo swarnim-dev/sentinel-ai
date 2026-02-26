@@ -40,10 +40,10 @@ class EmailRequest(BaseModel):
     headers: Optional[Dict[str, str]] = {}
 
 class FeedbackRequest(BaseModel):
-    item_type: str # 'url' or 'email'
-    item_hash: str # Privacy preserving, no raw text/url
-    user_label: str # 'safe' or 'phishing'
-    prediction_was: str
+    item_type: str        # 'url' or 'email'
+    url: str = ""         # The actual URL for feature extraction
+    user_label: str       # 'safe' or 'phishing'
+    prediction_was: str   # What the model predicted
 
 @app.post("/predict/url")
 async def predict_url(req: URLRequest):
@@ -104,6 +104,43 @@ async def predict_email(req: EmailRequest):
 
 @app.post("/feedback")
 async def submit_feedback(req: FeedbackRequest):
-    # In a real app, this would append to a training dataset database
-    # Here, we just acknowledge receipt for the privacy loop
-    return {"status": "success", "message": "Feedback recorded anonymously to improve model."}
+    from feedback_store import store_feedback, count_feedback, RETRAIN_THRESHOLD
+
+    if req.item_type == "url" and req.url:
+        # Extract features from the URL so we can retrain on them
+        features_df = url_model_instance.extract_features(req.url)
+        features_dict = features_df.iloc[0].to_dict()
+
+        total = store_feedback(
+            url=req.url,
+            features_dict=features_dict,
+            user_label=req.user_label,
+            prediction_was=req.prediction_was
+        )
+
+        # If retrain was triggered, hot-reload the model
+        if total >= RETRAIN_THRESHOLD:
+            url_model_instance.load_model()
+
+        return {
+            "status": "success",
+            "message": f"Feedback stored. {total}/{RETRAIN_THRESHOLD} corrections until next retrain.",
+            "feedback_count": total,
+            "retrain_threshold": RETRAIN_THRESHOLD
+        }
+    else:
+        return {
+            "status": "success",
+            "message": "Feedback acknowledged (email feedback is noted but not used for retraining yet)."
+        }
+
+@app.get("/feedback/status")
+async def feedback_status():
+    from feedback_store import count_feedback, RETRAIN_THRESHOLD
+    total = count_feedback()
+    return {
+        "feedback_count": total,
+        "retrain_threshold": RETRAIN_THRESHOLD,
+        "progress_percent": round((total / RETRAIN_THRESHOLD) * 100, 1)
+    }
+
