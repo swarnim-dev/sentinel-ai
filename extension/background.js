@@ -108,3 +108,87 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return true;
     }
 });
+
+// ── File Download Scanner ──
+const MAX_SCAN_SIZE = 10 * 1024 * 1024; // 10 MB
+
+chrome.downloads.onChanged.addListener(async (delta) => {
+    // Only act when a download finishes
+    if (!delta.state || delta.state.current !== "complete") return;
+
+    try {
+        // Get download details
+        const [item] = await chrome.downloads.search({ id: delta.id });
+        if (!item) return;
+
+        const filePath = item.filename;
+        const fileSize = item.fileSize;
+        const fileName = filePath.split("/").pop().split("\\").pop();
+
+        // Skip files over 10MB
+        if (fileSize > MAX_SCAN_SIZE) {
+            console.log(`Sentinel: Skipping ${fileName} (${(fileSize / 1024 / 1024).toFixed(1)}MB > 10MB limit)`);
+            return;
+        }
+
+        console.log(`Sentinel: Scanning downloaded file: ${fileName} (${(fileSize / 1024).toFixed(1)}KB)`);
+
+        // Read the file using the file:// URL provided by Chrome
+        const fileUrl = item.url;
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+
+        // Send to backend for scanning
+        const formData = new FormData();
+        formData.append("file", blob, fileName);
+
+        const scanResponse = await fetch(`${API_URL}/scan/file`, {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await scanResponse.json();
+
+        // Log to scan history
+        await logScan(
+            "file://" + fileName,
+            result.risk_score || 0,
+            result.verdict === "safe" ? "safe" : "phishing"
+        );
+
+        // Show notification based on verdict
+        if (result.verdict === "dangerous") {
+            showFileNotification(
+                "DANGER: Malicious File Detected",
+                `${fileName} is likely dangerous!\n${result.reasons[0]}`,
+                fileName
+            );
+        } else if (result.verdict === "suspicious") {
+            showFileNotification(
+                "Warning: Suspicious File",
+                `${fileName} has suspicious indicators.\n${result.reasons[0]}`,
+                fileName
+            );
+        } else {
+            showFileNotification(
+                "File Scan: Safe",
+                `${fileName} appears clean.`,
+                fileName
+            );
+        }
+
+    } catch (error) {
+        console.error("Sentinel: File scan error", error);
+    }
+});
+
+function showFileNotification(title, message, fileName) {
+    chrome.notifications.create("file-scan-" + Date.now(), {
+        type: "basic",
+        iconUrl: "icon.png",
+        title: title,
+        message: message,
+        priority: 2
+    });
+}
+

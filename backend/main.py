@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict
@@ -12,7 +12,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from models.url_model import URLModel
 from models.email_model import EmailModel
 from models.headers_check import check_headers_for_anomalies
+from models.file_scanner import scan_file
 from explain.shap_explainer import get_url_explanation, get_text_explanation
+
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 app = FastAPI(
     title="AI Phishing Detector API",
@@ -143,4 +146,18 @@ async def feedback_status():
         "retrain_threshold": RETRAIN_THRESHOLD,
         "progress_percent": round((total / RETRAIN_THRESHOLD) * 100, 1)
     }
+
+@app.post("/scan/file")
+async def scan_uploaded_file(file: UploadFile = File(...)):
+    """Scan an uploaded file (max 10MB) for malicious indicators."""
+    content = await file.read()
+
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail=f"File too large. Max size is {MAX_FILE_SIZE // (1024*1024)} MB."
+        )
+
+    result = scan_file(file.filename, content)
+    return result
 
