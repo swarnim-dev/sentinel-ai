@@ -15,6 +15,7 @@ An AI-powered browser extension that detects phishing URLs and suspicious emails
 | **Header Anomaly Checks** | Detects SPF/DKIM failures and From/Reply-To mismatches |
 | **SHAP Explainability** | Every prediction comes with plain-English reasons (e.g. "The URL uses a raw IP address instead of a domain name") |
 | **Site Blocking** | Phishing sites are blocked **before loading** with a full-screen interstitial warning page |
+| **File Download Scanner** | Automatically scans files under 10MB on download using 6-layer static analysis (magic bytes, entropy, suspicious strings, etc.) |
 | **Auto-Retrain Feedback Loop** | Model learns from user corrections — auto-retrains after every 500 reports |
 | **Weekly Digital Hygiene Report** | Tracks browsing habits locally and displays a visual dashboard with safety score, daily chart, and flagged domains |
 
@@ -58,12 +59,13 @@ phishing_detector/
 │   ├── models/
 │   │   ├── url_model.py         # 30-feature URL extractor + prediction
 │   │   ├── email_model.py       # TF-IDF email classifier
-│   │   └── headers_check.py     # SPF/DKIM/Reply-To rule checks
+│   │   ├── headers_check.py     # SPF/DKIM/Reply-To rule checks
+│   │   └── file_scanner.py      # 6-layer static file analysis
 │   └── explain/
 │       └── shap_explainer.py    # SHAP explanations → plain English
 ├── extension/
 │   ├── manifest.json            # Chrome Manifest V3
-│   ├── background.js            # Intercepts navigation + logs scans
+│   ├── background.js            # Intercepts navigation + logs scans + download scanner
 │   ├── content.js               # Injects warning banners on pages
 │   ├── blocked.html / .js       # Full-page interstitial for blocked sites
 │   ├── report.html / .js        # Weekly Digital Hygiene Report dashboard
@@ -120,6 +122,7 @@ uvicorn main:app --port 8000
 |---|---|---|
 | `POST` | `/predict/url` | Scan a URL → risk score + SHAP reasons |
 | `POST` | `/predict/email` | Scan email body + headers → risk score + reasons |
+| `POST` | `/scan/file` | Upload a file (max 10MB) for static malware analysis |
 | `POST` | `/feedback` | Submit a correction (triggers retrain at 500) |
 | `GET` | `/feedback/status` | Check progress toward next auto-retrain |
 
@@ -164,6 +167,28 @@ Click **"View Weekly Report"** in the extension popup to see:
 - **Top flagged domains** — Riskiest sites you've encountered
 
 All data is stored **locally in Chrome storage** — nothing is sent to any server.
+
+---
+
+## File Download Scanner
+
+Every file you download (under 10MB) is automatically scanned with **6 analysis layers**:
+
+| Layer | What It Catches |
+|---|---|
+| **Dangerous Extensions** | `.exe`, `.bat`, `.ps1`, `.vbs`, `.scr`, `.msi`, `.jar`, `.sh` and more |
+| **Double Extensions** | Files like `invoice.pdf.exe` that disguise their true type |
+| **Magic Byte Analysis** | Detects mismatches between file extension and actual content (e.g. a `.pdf` that's really an `.exe`) |
+| **Entropy Analysis** | High Shannon entropy indicates packed/encrypted malware |
+| **Suspicious Strings** | PowerShell commands, base64 decode, `eval()`, registry edits, reverse shells |
+| **Office Macro Indicators** | VBA macros, `AutoOpen`, `Shell`, `CreateObject` in Office files |
+
+Results appear as a **Chrome notification** immediately after download completes.
+
+```bash
+# Manual test via API
+curl -X POST http://127.0.0.1:8000/scan/file -F "file=@suspicious_file.exe"
+```
 
 ---
 
